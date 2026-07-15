@@ -1,0 +1,39 @@
+# ==========================================================
+# Reviews Agent — .gitignore
+# ==========================================================
+
+# --- Python: байткод и кэши инструментов ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- Виртуальное окружение (пересоздаётся из requirements.txt) ---
+.venv/
+venv/
+
+# --- Секреты: пароль reviews_app, ANTHROPIC_API_KEY, токен бота ---
+# В репозиторий попадёт только .env.example с пустыми значениями (шаг 2).
+.env
+.env.local
+*.pem
+
+# --- Кэш моделей fastembed ---
+# ONNX-веса multilingual-e5-large — сотни мегабайт бинарников.
+# Скачиваются автоматически при первом запуске индексации.
+models/
+.fastembed_cache/
+
+# --- IDE ---
+.vscode/
+.idea/
+
+# --- ОС ---
+.DS_Store
+Thumbs.db
+
+# --- Логи ---
+*.log
+logs/

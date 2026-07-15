@@ -1,0 +1,46 @@
+# ==========================================================
+# Reviews Agent — зависимости
+# Версии зафиксированы по PyPI на 15.07.2026
+# Python 3.11
+# Установка: pip install -r requirements.txt
+# ==========================================================
+
+# --- Ядро: оркестрация графа, состояние, interrupt() для HITL ---
+langgraph==1.2.9
+
+# --- Персистентность: PostgresSaver хранит чекпоинты графа в базе.
+#     Без него interrupt() не переживёт перезапуск процесса —
+#     а у нас пауза на ревью может длиться часами.
+#     Тянет psycopg 3 без extras; нужные extras ставим явно ниже. ---
+langgraph-checkpoint-postgres==3.1.0
+
+# --- LLM: Haiku 4.5 (классификация) + Sonnet 5 (генерация ответов) ---
+anthropic==0.116.0
+
+# --- Эмбеддинги: intfloat/multilingual-e5-large через ONNX Runtime.
+#     Лицензия MIT, dim=1024, 100 языков — покрывает uk+en.
+#     Работает без torch: ~200 МБ зависимостей вместо ~2 ГБ. ---
+fastembed==0.8.0
+
+# --- Драйвер Postgres.
+#     binary — готовые бинарники libpq, не требует компилятора;
+#     pool   — пул соединений, нужен для FastAPI-эндпоинтов. ---
+psycopg[binary,pool]==3.3.4
+
+# --- Тип vector для psycopg: register_vector() учит драйвер
+#     превращать list[float] в vector(1024) и обратно.
+#     Без него — TypeError при INSERT эмбеддинга. ---
+pgvector==0.5.0
+
+# --- HTTP-слой: приём Telegram callback_query, health-check.
+#     [standard] включает uvicorn и fastapi-cli. ---
+fastapi[standard]==0.139.0
+
+# --- Конфиг из .env с валидацией типов на старте:
+#     отсутствующий токен — падение при импорте, а не в рантайме. ---
+pydantic-settings==2.14.2
+
+# --- HTTP-клиент для Telegram Bot API.
+#     Приходит транзитивно с anthropic, но используем напрямую,
+#     поэтому объявляем явно — правило explicit dependencies. ---
+httpx==0.28.1

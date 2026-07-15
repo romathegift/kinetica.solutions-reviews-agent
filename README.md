@@ -1,2 +1,53 @@
-# kinetica.reviews-agent
-LangGraph agent that classifies customer reviews, drafts brand-voice replies grounded in a knowledge base (RAG), and routes them to a human for approval in Telegram.
+# AI Reviews & Reputation Agent
+
+Пайплайн на LangGraph: классифицирует отзывы клиентов, генерирует ответы
+в тоне бренда с опорой на базу знаний (RAG), отправляет на подтверждение
+человеку в Telegram.
+
+**Статус:** в разработке. Портфолио-демо Kinetica Solutions.
+
+## Что делает
+
+1. Принимает отзыв (Google Maps), определяет язык — uk / en.
+2. Классифицирует: категория, тональность, срочность, флаг эскалации.
+3. Маршрутизирует по категории:
+   - `spam` — отсекается без генерации;
+   - `praise` — ответ сразу, без обращения к базе знаний;
+   - `complaint` / `question` — сначала поиск в базе знаний (pgvector), потом ответ.
+4. Все не-спам ответы уходят человеку на подтверждение в Telegram:
+   approve / edit / reject.
+5. После подтверждения — публикация (в демо — имитация).
+
+## Стек
+
+| Слой | Технология |
+|---|---|
+| Оркестрация | LangGraph 1.2.9 |
+| LLM | Claude Haiku 4.5 (классификация), Claude Sonnet 5 (генерация) |
+| Эмбеддинги | intfloat/multilingual-e5-large через fastembed (ONNX) |
+| Векторный поиск | pgvector, HNSW, косинусная метрика |
+| Персистентность | PostgresSaver (чекпоинты графа) |
+| HITL | Telegram Bot API |
+| API | FastAPI |
+
+## Структура
+
+```
+reviews_agent/
+├── nodes/      — узлы графа (ingest, classify, retrieve, generate, ...)
+├── prompts/    — промпты классификатора и генератора
+├── tg/         — Telegram-клиент и HITL-карточки
+└── api/        — FastAPI: webhook, health-check
+data/           — фикстуры отзывов и база знаний
+scripts/        — индексация базы знаний в pgvector
+tests/          — тесты
+```
+
+## Запуск
+
+Раздел будет заполнен по мере готовности компонентов.
+
+## Лицензия
+
+Демонстрационный проект. Бренд «Медовий Ранок» вымышлен,
+отзывы — синтетические фикстуры.
