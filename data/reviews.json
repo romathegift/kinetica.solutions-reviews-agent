@@ -46,8 +46,8 @@
       "sentiment": "negative",
       "urgency": "medium",
       "escalate": false,
-      "kb_ids": ["kb_009", "kb_014", "kb_021"],
-      "note": "Скарга, яка МАЄ рішення в базі (kb_009 — довге очікування понад 15 хвилин). Ескалації немає: rating=3 (>2) і urgency=medium (не high). Перевіряє повний шлях complaint → Retrieve → Generate з конкретною пропозицією промокоду."
+      "kb_ids": ["kb_009"],
+      "note": "Скарга, яка МАЄ рішення в базі (kb_009 — довге очікування понад 15 хвилин). Ескалації немає: rating=3 (>2) і urgency=medium (не high). Перевіряє повний шлях complaint → Retrieve → Rerank → Generate з конкретною пропозицією промокоду. kb_ids містить лише kb_009: правило тону (kb_014, voice) і приклад відповіді (kb_021, example) їдуть у статичний контекст Generate, а Retrieve шукає серед policy — тому вони не є очікуваним результатом пошуку."
     }
   },
   {

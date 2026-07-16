@@ -105,10 +105,10 @@
   },
   {
     "id": "kb_014",
-    "type": "policy",
+    "type": "voice",
     "language": "uk",
-    "category": "complaint",
-    "source": "service_policy",
+    "category": null,
+    "source": "brand_book",
     "content": "Реакція на негатив: не сперечаємось і не виправдовуємось публічно. Дякуємо за сигнал, визнаємо проблему, пропонуємо конкретне рішення і запрошуємо повернутись."
   },
   {
