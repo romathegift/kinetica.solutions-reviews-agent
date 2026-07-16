@@ -4,8 +4,9 @@
 Запуск из корня проекта при поднятом SSH-туннеле:
     python -m scripts.index_knowledge_base
 
-Переиндексация полная: TRUNCATE + INSERT. Для 22 чанков это дешевле
-и надёжнее upsert — база всегда ровно соответствует JSON, без дрейфа.
+Переиндексация полная, но в пределах одного клиента: DELETE по client_id + INSERT.
+Для 22 чанков это дешевле и надёжнее upsert — база всегда ровно
+соответствует JSON, без дрейфа.
 """
 
 import json
@@ -13,7 +14,7 @@ import sys
 
 from psycopg.rows import dict_row
 
-from reviews_agent.config import PROJECT_ROOT
+from reviews_agent.config import PROJECT_ROOT, get_settings
 from reviews_agent.db import check_connection, close_pool, get_connection
 from reviews_agent.embeddings import EMBEDDING_DIM, embed_passages
 
@@ -59,6 +60,8 @@ def load_chunks() -> list[dict]:
 
 def index() -> None:
     """Сценарий: проверка окружения -> чтение JSON -> векторизация -> запись."""
+    client_id = get_settings().client_id
+
     # 1. Проверяем базу ДО векторизации: обидно ждать модель,
     #    чтобы упасть на отсутствующей таблице.
     env = check_connection()
@@ -66,13 +69,14 @@ def index() -> None:
         f"База: {env['database']} | пользователь: {env['user']} "
         f"| vector: {env['vector_extension']}"
     )
+    print(f"Клиент: {client_id}")
 
     if env["vector_extension"] is None:
         sys.exit("Расширение vector не активно в базе.")
     if not env["knowledge_base_exists"]:
         sys.exit("Таблицы knowledge_base нет — индексировать некуда.")
 
-    print(f"В таблице сейчас чанков: {env['knowledge_base_rows']}")
+    print(f"Всего чанков в таблице (все клиенты): {env['knowledge_base_rows']}")
 
     # 2. Читаем и валидируем JSON
     chunks = load_chunks()
@@ -94,21 +98,29 @@ def index() -> None:
 
     print(f"Векторов: {len(vectors)} | размерность: {vectors[0].shape[0]}")
 
-    # 4. Запись. TRUNCATE и INSERT в одной транзакции: если вставка упадёт,
+    # 4. Запись. DELETE и INSERT в одной транзакции: если вставка упадёт,
     #    старые данные вернутся, база не останется пустой.
-    #    RESTART IDENTITY сбрасывает счётчик BIGSERIAL — id снова с 1.
+    #
+    #    DELETE по client_id, а НЕ TRUNCATE: таблица общая для всех клиентов,
+    #    и TRUNCATE снёс бы чужие базы знаний. Побочный эффект — счётчик
+    #    BIGSERIAL не сбрасывается, id растут сквозным образом. Так и надо:
+    #    стабильные идентификаторы чанков (kb_001...) живут в JSON, а не в базе.
     with get_connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:
-            cur.execute("TRUNCATE knowledge_base RESTART IDENTITY")
+            cur.execute(
+                "DELETE FROM knowledge_base WHERE client_id = %s", (client_id,)
+            )
+            deleted = cur.rowcount
 
             cur.executemany(
                 """
                 INSERT INTO knowledge_base
-                    (content, embedding, type, language, category, source)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                    (client_id, content, embedding, type, language, category, source)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """,
                 [
                     (
+                        client_id,
                         chunk["content"],
                         vector,  # numpy едет как vector: register_vector в db.py
                         chunk["type"],
@@ -121,11 +133,18 @@ def index() -> None:
             )
 
             # 5. Контрольные числа — внутри той же транзакции
-            cur.execute("SELECT count(*) AS n FROM knowledge_base")
+            cur.execute(
+                "SELECT count(*) AS n FROM knowledge_base WHERE client_id = %s",
+                (client_id,),
+            )
             total = cur.fetchone()["n"]
 
             cur.execute(
-                "SELECT count(*) AS n FROM knowledge_base WHERE embedding IS NULL"
+                """
+                SELECT count(*) AS n FROM knowledge_base
+                WHERE client_id = %s AND embedding IS NULL
+                """,
+                (client_id,),
             )
             null_vectors = cur.fetchone()["n"]
 
@@ -133,17 +152,34 @@ def index() -> None:
                 """
                 SELECT type, language, count(*) AS n
                 FROM knowledge_base
+                WHERE client_id = %s
                 GROUP BY type, language
                 ORDER BY type, language
-                """
+                """,
+                (client_id,),
             )
             breakdown = cur.fetchall()
 
-    print(f"\nВставлено чанков: {total}")
+            # Контроль изоляции: чанки других клиентов не пострадали
+            cur.execute(
+                """
+                SELECT client_id, count(*) AS n
+                FROM knowledge_base
+                GROUP BY client_id
+                ORDER BY client_id
+                """
+            )
+            by_client = cur.fetchall()
+
+    print(f"\nУдалено старых чанков клиента: {deleted}")
+    print(f"Вставлено чанков: {total}")
     print(f"Чанков без вектора: {null_vectors}")
     print("Раскладка:")
     for row in breakdown:
         print(f"  {row['type']:<8} {row['language']:<3} {row['n']}")
+    print("Всего в таблице по клиентам:")
+    for row in by_client:
+        print(f"  {row['client_id']:<16} {row['n']}")
 
 
 if __name__ == "__main__":
