@@ -1,0 +1,121 @@
+[
+  {
+    "review_id": "rev_001",
+    "source": "google_maps",
+    "author": "Олена Ковальчук",
+    "rating": 5,
+    "created_at": "2026-07-05T09:14:00Z",
+    "text": "Найкраща кава в районі! Сирники неймовірні, а бариста завжди усміхнений. Приходжу сюди щоранку перед роботою і жодного разу не розчарувалась.",
+    "_expected": {
+      "language": "uk",
+      "category": "praise",
+      "sentiment": "positive",
+      "urgency": "low",
+      "escalate": false,
+      "kb_ids": [],
+      "note": "Базова подяка українською. Минає Retrieve — генерація спирається лише на голос бренду з промпту. Перевіряє гілку praise і правило про максимум один емодзі в позитиві."
+    }
+  },
+  {
+    "review_id": "rev_002",
+    "source": "google_maps",
+    "author": "James Whitfield",
+    "rating": 5,
+    "created_at": "2026-07-07T11:02:00Z",
+    "text": "Lovely spot for a slow breakfast. The avocado toast was fresh and the oat flat white was exactly right. Staff made us feel welcome even though we came in ten minutes before the kitchen closed.",
+    "_expected": {
+      "language": "en",
+      "category": "praise",
+      "sentiment": "positive",
+      "urgency": "low",
+      "escalate": false,
+      "kb_ids": [],
+      "note": "Подяка англійською. Перевіряє автодетект мови (0% кирилиці) і те, що відповідь згенерується англійською, а не українською."
+    }
+  },
+  {
+    "review_id": "rev_003",
+    "source": "google_maps",
+    "author": "Марина Литвин",
+    "rating": 3,
+    "created_at": "2026-07-09T14:37:00Z",
+    "text": "Кава смачна, але чекала на замовлення хвилин двадцять, хоча в залі було майже порожньо. Ніхто не попередив, що буде так довго — я мало не запізнилась на зустріч.",
+    "_expected": {
+      "language": "uk",
+      "category": "complaint",
+      "sentiment": "negative",
+      "urgency": "medium",
+      "escalate": false,
+      "kb_ids": ["kb_009", "kb_014", "kb_021"],
+      "note": "Скарга, яка МАЄ рішення в базі (kb_009 — довге очікування понад 15 хвилин). Ескалації немає: rating=3 (>2) і urgency=medium (не high). Перевіряє повний шлях complaint → Retrieve → Generate з конкретною пропозицією промокоду."
+    }
+  },
+  {
+    "review_id": "rev_004",
+    "source": "google_maps",
+    "author": "Андрій Бондаренко",
+    "rating": 1,
+    "created_at": "2026-07-13T18:55:00Z",
+    "text": "З картки двічі списали гроші за одне замовлення. Пишу вам третій день — ніхто не відповідає, гроші не повернули. Це вже схоже на шахрайство, буду звертатись у банк.",
+    "_expected": {
+      "language": "uk",
+      "category": "complaint",
+      "sentiment": "negative",
+      "urgency": "high",
+      "escalate": true,
+      "kb_ids": [],
+      "note": "Пріоритетний негатив БЕЗ рішення в базі: платіжних інцидентів у knowledge_base немає навмисно. Ескалація спрацьовує двічі — за правилом (negative + rating<=2 + urgency=high) і за порожнім Retrieve. КЛЮЧОВА ФІКСТУРА ДЛЯ КАЛІБРУВАННЯ ПОРОГУ: якщо поріг занизити, підтягнеться kb_011 (повернення вартості напою) — це буде хибне спрацювання, і агент пообіцяє не те. Генерація не блокується: відповідь має визнати проблему без обіцянок."
+    }
+  },
+  {
+    "review_id": "rev_005",
+    "source": "google_maps",
+    "author": "Софія Гриценко",
+    "rating": 4,
+    "created_at": "2026-07-11T10:20:00Z",
+    "text": "Підкажіть, будь ласка, чи є у вас вівсяне молоко і чи можна прийти з собакою на терасу? Планую зайти на сніданок у суботу.",
+    "_expected": {
+      "language": "uk",
+      "category": "question",
+      "sentiment": "neutral",
+      "urgency": "low",
+      "escalate": false,
+      "kb_ids": ["kb_003", "kb_008"],
+      "note": "Питання з ДВОМА темами одразу — перевіряє, що Retrieve з top-k=4 витягує обидва чанки (молоко + тварини), а відповідь покриває обидва питання, а не одне."
+    }
+  },
+  {
+    "review_id": "rev_006",
+    "source": "google_maps",
+    "author": "Emma Larsson",
+    "rating": 4,
+    "created_at": "2026-07-12T16:48:00Z",
+    "text": "Do you still take kitchen orders late in the evening? Planning to come after 8pm on a Saturday and would hate to miss breakfast food.",
+    "_expected": {
+      "language": "en",
+      "category": "question",
+      "sentiment": "neutral",
+      "urgency": "low",
+      "escalate": false,
+      "kb_ids": ["kb_002", "kb_007"],
+      "note": "Питання англійською. Перевіряє, що Retrieve дістає англомовний чанк (kb_002), а не український дубль — тобто що мовні дублі в базі реально працюють."
+    }
+  },
+  {
+    "review_id": "rev_007",
+    "source": "google_maps",
+    "author": "Crypto Profit",
+    "rating": 5,
+    "created_at": "2026-07-14T03:11:00Z",
+    "text": "🔥🔥 ЗАРОБІТОК ВДОМА ВІД 5000$ НА МІСЯЦЬ БЕЗ ВКЛАДЕНЬ! Пиши в приват @crypto_profit_2026 — навчу з нуля, перші виплати вже на другий день 🔥🔥",
+    "_expected": {
+      "language": "uk",
+      "category": "spam",
+      "sentiment": "neutral",
+      "urgency": "low",
+      "escalate": false,
+      "kb_ids": [],
+      "note": "Спам із рейтингом 5 (реалістично: спамери ставлять високу оцінку, щоб потрапити в топ видачі). Перевіряє, що фільтр спрацьовує за змістом, а не за рейтингом: гілка обривається до Generate, витрат на Sonnet немає, картка в Telegram не йде."
+    }
+  }
+]

@@ -1,0 +1,178 @@
+[
+  {
+    "id": "kb_001",
+    "type": "faq",
+    "language": "uk",
+    "category": "question",
+    "source": "faq_page",
+    "content": "Режим роботи: щодня з 8:00 до 21:00, у вихідні з 9:00 до 22:00. Кухня приймає останні замовлення о 20:30."
+  },
+  {
+    "id": "kb_002",
+    "type": "faq",
+    "language": "en",
+    "category": "question",
+    "source": "faq_page",
+    "content": "Opening hours: daily 8:00-21:00, weekends 9:00-22:00. The kitchen takes last orders at 20:30."
+  },
+  {
+    "id": "kb_003",
+    "type": "faq",
+    "language": "uk",
+    "category": "question",
+    "source": "faq_page",
+    "content": "Рослинне молоко: вівсяне, мигдалеве, кокосове та безлактозне. Заміна безкоштовна, доплати немає."
+  },
+  {
+    "id": "kb_004",
+    "type": "faq",
+    "language": "en",
+    "category": "question",
+    "source": "faq_page",
+    "content": "Plant-based milk options: oat, almond, coconut and lactose-free. Swapping milk is free of charge."
+  },
+  {
+    "id": "kb_005",
+    "type": "faq",
+    "language": "uk",
+    "category": "question",
+    "source": "faq_page",
+    "content": "Wi-Fi безкоштовний, пароль на серветниці. Розетки є біля вікон і за великим спільним столом, тож із ноутбуком працювати зручно."
+  },
+  {
+    "id": "kb_006",
+    "type": "faq",
+    "language": "en",
+    "category": "question",
+    "source": "faq_page",
+    "content": "Free Wi-Fi, the password is on the napkin holder. Power outlets are by the windows and at the large communal table, so laptop work is welcome."
+  },
+  {
+    "id": "kb_007",
+    "type": "faq",
+    "language": "uk",
+    "category": "question",
+    "source": "faq_page",
+    "content": "Сніданки подаємо до 12:00, у вихідні — до 13:00. Сирники, гранола та авокадо-тост доступні протягом усього дня."
+  },
+  {
+    "id": "kb_008",
+    "type": "faq",
+    "language": "uk",
+    "category": "question",
+    "source": "faq_page",
+    "content": "З тваринами: собак і котів радо зустрічаємо і в залі, і на терасі. Миску з водою принесемо за проханням."
+  },
+  {
+    "id": "kb_009",
+    "type": "policy",
+    "language": "uk",
+    "category": "complaint",
+    "source": "service_policy",
+    "content": "Довге очікування: якщо замовлення готували понад 15 хвилин, вибачаємось, чесно називаємо причину без відмовок і даруємо безкоштовний напій на наступний візит. Промокод надсилаємо в приватному повідомленні."
+  },
+  {
+    "id": "kb_010",
+    "type": "policy",
+    "language": "en",
+    "category": "complaint",
+    "source": "service_policy",
+    "content": "Long wait: if an order took more than 15 minutes, we apologise, name the reason honestly and offer a free drink on the next visit. The promo code is sent in a private message."
+  },
+  {
+    "id": "kb_011",
+    "type": "policy",
+    "language": "uk",
+    "category": "complaint",
+    "source": "service_policy",
+    "content": "Холодний або неправильно приготований напій: переробляємо одразу без зайвих питань або повертаємо вартість напою на місці. Якщо гість уже пішов, пропонуємо заміну під час наступного візиту."
+  },
+  {
+    "id": "kb_012",
+    "type": "policy",
+    "language": "en",
+    "category": "complaint",
+    "source": "service_policy",
+    "content": "Cold or incorrectly prepared drink: we remake it right away, no questions asked, or refund the price of the drink on the spot. If the guest has already left, we offer a replacement on their next visit."
+  },
+  {
+    "id": "kb_013",
+    "type": "policy",
+    "language": "uk",
+    "category": "complaint",
+    "source": "service_policy",
+    "content": "Помилка в замовленні: приносимо правильну позицію, помилкову назад не забираємо і доплату не просимо."
+  },
+  {
+    "id": "kb_014",
+    "type": "policy",
+    "language": "uk",
+    "category": "complaint",
+    "source": "service_policy",
+    "content": "Реакція на негатив: не сперечаємось і не виправдовуємось публічно. Дякуємо за сигнал, визнаємо проблему, пропонуємо конкретне рішення і запрошуємо повернутись."
+  },
+  {
+    "id": "kb_015",
+    "type": "voice",
+    "language": "uk",
+    "category": null,
+    "source": "brand_book",
+    "content": "Тон бренду: тепло і по-людськи, звертаємось на «ви». Відповідь — від одного до чотирьох речень, без канцеляриту та шаблонних фраз на кшталт «ваша думка дуже важлива для нас»."
+  },
+  {
+    "id": "kb_016",
+    "type": "voice",
+    "language": "en",
+    "category": null,
+    "source": "brand_book",
+    "content": "Brand voice: warm and human, polite and never stiff. Keep replies between one and four sentences and avoid corporate cliches such as 'your feedback is very important to us'."
+  },
+  {
+    "id": "kb_017",
+    "type": "voice",
+    "language": "uk",
+    "category": null,
+    "source": "brand_book",
+    "content": "Емодзі: максимум один на відповідь і тільки в позитивному контексті. У відповідях на скарги емодзі не використовуємо."
+  },
+  {
+    "id": "kb_018",
+    "type": "voice",
+    "language": "uk",
+    "category": null,
+    "source": "brand_book",
+    "content": "Підпис: кожну відповідь завершуємо від імені команди — «Команда «Медовий Ранок»». Особистими іменами не підписуємось."
+  },
+  {
+    "id": "kb_019",
+    "type": "example",
+    "language": "uk",
+    "category": "praise",
+    "source": "reply_examples",
+    "content": "Приклад відповіді на подяку: «Дякуємо за теплі слова! Обов'язково передамо їх бариста. Чекаємо на вас знову. Команда «Медовий Ранок»»"
+  },
+  {
+    "id": "kb_020",
+    "type": "example",
+    "language": "en",
+    "category": "praise",
+    "source": "reply_examples",
+    "content": "Example reply to praise: «Thank you for the kind words! We will pass them on to our barista. See you soon. The Medovyi Ranok team»"
+  },
+  {
+    "id": "kb_021",
+    "type": "example",
+    "language": "uk",
+    "category": "complaint",
+    "source": "reply_examples",
+    "content": "Приклад відповіді на скаргу: «Шкода, що так вийшло — каву мали подати гарячою. Надсилаємо промокод на безкоштовний напій, скористайтесь ним у наступний візит. Команда «Медовий Ранок»»"
+  },
+  {
+    "id": "kb_022",
+    "type": "example",
+    "language": "uk",
+    "category": "question",
+    "source": "reply_examples",
+    "content": "Приклад відповіді на питання: «Так, вівсяне молоко у нас є, заміна безкоштовна. Приходьте — зробимо вам капучино. Команда «Медовий Ранок»»"
+  }
+]
