@@ -8,14 +8,6 @@
     "content": "Режим роботи: щодня з 8:00 до 21:00, у вихідні з 9:00 до 22:00. Кухня приймає останні замовлення о 20:30."
   },
   {
-    "id": "kb_002",
-    "type": "faq",
-    "language": "en",
-    "category": "question",
-    "source": "faq_page",
-    "content": "Opening hours: daily 8:00-21:00, weekends 9:00-22:00. The kitchen takes last orders at 20:30."
-  },
-  {
     "id": "kb_003",
     "type": "faq",
     "language": "uk",
@@ -24,28 +16,12 @@
     "content": "Рослинне молоко: вівсяне, мигдалеве, кокосове та безлактозне. Заміна безкоштовна, доплати немає."
   },
   {
-    "id": "kb_004",
-    "type": "faq",
-    "language": "en",
-    "category": "question",
-    "source": "faq_page",
-    "content": "Plant-based milk options: oat, almond, coconut and lactose-free. Swapping milk is free of charge."
-  },
-  {
     "id": "kb_005",
     "type": "faq",
     "language": "uk",
     "category": "question",
     "source": "faq_page",
     "content": "Wi-Fi безкоштовний, пароль на серветниці. Розетки є біля вікон і за великим спільним столом, тож із ноутбуком працювати зручно."
-  },
-  {
-    "id": "kb_006",
-    "type": "faq",
-    "language": "en",
-    "category": "question",
-    "source": "faq_page",
-    "content": "Free Wi-Fi, the password is on the napkin holder. Power outlets are by the windows and at the large communal table, so laptop work is welcome."
   },
   {
     "id": "kb_007",
@@ -72,28 +48,12 @@
     "content": "Довге очікування: якщо замовлення готували понад 15 хвилин, вибачаємось, чесно називаємо причину без відмовок і даруємо безкоштовний напій на наступний візит. Промокод надсилаємо в приватному повідомленні."
   },
   {
-    "id": "kb_010",
-    "type": "policy",
-    "language": "en",
-    "category": "complaint",
-    "source": "service_policy",
-    "content": "Long wait: if an order took more than 15 minutes, we apologise, name the reason honestly and offer a free drink on the next visit. The promo code is sent in a private message."
-  },
-  {
     "id": "kb_011",
     "type": "policy",
     "language": "uk",
     "category": "complaint",
     "source": "service_policy",
     "content": "Холодний або неправильно приготований напій: переробляємо одразу без зайвих питань або повертаємо вартість напою на місці. Якщо гість уже пішов, пропонуємо заміну під час наступного візиту."
-  },
-  {
-    "id": "kb_012",
-    "type": "policy",
-    "language": "en",
-    "category": "complaint",
-    "source": "service_policy",
-    "content": "Cold or incorrectly prepared drink: we remake it right away, no questions asked, or refund the price of the drink on the spot. If the guest has already left, we offer a replacement on their next visit."
   },
   {
     "id": "kb_013",
@@ -174,5 +134,45 @@
     "category": "question",
     "source": "reply_examples",
     "content": "Приклад відповіді на питання: «Так, вівсяне молоко у нас є, заміна безкоштовна. Приходьте — зробимо вам капучино. Команда «Медовий Ранок»»"
+  },
+  {
+    "id": "kb_023",
+    "type": "voice",
+    "language": "en",
+    "category": null,
+    "source": "brand_book",
+    "content": "Reacting to negative feedback: we never argue and never make public excuses. We thank the guest for speaking up, acknowledge the problem, offer a concrete solution and invite them back."
+  },
+  {
+    "id": "kb_024",
+    "type": "voice",
+    "language": "en",
+    "category": null,
+    "source": "brand_book",
+    "content": "Emoji: at most one per reply and only in a positive context. We never use emoji in replies to complaints."
+  },
+  {
+    "id": "kb_025",
+    "type": "voice",
+    "language": "en",
+    "category": null,
+    "source": "brand_book",
+    "content": "Signature: every reply is signed on behalf of the team — 'The Medovyi Ranok team', spelled exactly this way. We never sign with personal names."
+  },
+  {
+    "id": "kb_026",
+    "type": "example",
+    "language": "en",
+    "category": "complaint",
+    "source": "reply_examples",
+    "content": "Example reply to a complaint: «We are sorry it turned out this way — your coffee should have been served hot. We are sending you a promo code for a free drink, please use it on your next visit. The Medovyi Ranok team»"
+  },
+  {
+    "id": "kb_027",
+    "type": "example",
+    "language": "en",
+    "category": "question",
+    "source": "reply_examples",
+    "content": "Example reply to a question: «Yes, we do have oat milk and the swap is free of charge. Come by — we will make you a cappuccino. The Medovyi Ranok team»"
   }
 ]
