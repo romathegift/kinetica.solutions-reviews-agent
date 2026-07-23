@@ -45,6 +45,24 @@ class Settings(BaseSettings):
     telegram_bot_token: SecretStr
     telegram_chat_id: int
 
+    # --- Telegram webhook ---
+    # secret_token уходит в setWebhook и возвращается Telegram'ом в заголовке
+    # X-Telegram-Bot-Api-Secret-Token на КАЖДОМ апдейте. Без его проверки любой,
+    # кто знает публичный URL, может подделать callback и возобновить граф
+    # чужим решением. Это не «дополнительная защита», а единственная:
+    # эндпоинт по определению открыт в интернет.
+    telegram_webhook_secret: SecretStr = SecretStr("")
+
+    # Публичный HTTPS-адрес сервиса (без пути). Telegram принимает ТОЛЬКО https
+    # и только валидный сертификат — за это отвечает reverse-proxy на VPS.
+    telegram_webhook_base_url: str = ""
+    telegram_webhook_path: str = "/telegram/webhook"
+
+    # Адрес, на котором uvicorn слушает ВНУТРИ хоста/контейнера.
+    # Наружу его отдаёт proxy, поэтому здесь http и 0.0.0.0 — это норма.
+    webhook_host: str = "0.0.0.0"
+    webhook_port: int = 8080
+
     # --- LangGraph ---
     # Требование безопасности langgraph-checkpoint-postgres 3.1.0:
     # строгая msgpack-сериализация чекпоинтов.
@@ -80,6 +98,23 @@ class Settings(BaseSettings):
         сломалась бы на пароле с символами @ : / ? #.
         """
         return make_conninfo(**self.postgres_kwargs)
+
+    @property
+    def telegram_webhook_url(self) -> str:
+        """
+        Полный публичный URL вебхука.
+
+        Пустая строка означает «вебхук не сконфигурирован» — сервис
+        поднимется, но setWebhook не вызовет. Это осознанно: локальный
+        запуск для проверки эндпоинта не должен требовать домена.
+        """
+        if not self.telegram_webhook_base_url:
+            return ""
+        base = self.telegram_webhook_base_url.rstrip("/")
+        path = self.telegram_webhook_path
+        if not path.startswith("/"):
+            path = "/" + path
+        return f"{base}{path}"
 
 
 @lru_cache
