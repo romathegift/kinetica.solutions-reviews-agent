@@ -1,0 +1,34 @@
+# Секреты — первое и главное. .env в образе на VPS означает токен бота
+# внутри артефакта, который можно вытащить одной командой.
+.env
+.env.*
+!.env.example
+
+# История и локальное окружение
+.git
+.gitignore
+.venv
+venv
+*.egg-info/
+build/
+dist/
+
+# Кэши
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Тесты в рантайм-образ не нужны: pytest в prod-зависимости не входит
+tests/
+
+# Докер-обвязка сама себе не нужна внутри контекста
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Прочее
+.DS_Store
+.idea/
+.vscode/
