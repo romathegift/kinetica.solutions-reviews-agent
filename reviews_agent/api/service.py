@@ -35,6 +35,13 @@ Telegram от постороннего, — заголовок X-Telegram-Bot-Ap
 Сравнение через hmac.compare_digest, а не '==': сравнение секретов
 обычным оператором утекает по времени.
 
+ЛОГИРОВАНИЕ
+-----------
+configure_logging() вызывается первой строкой lifespan — то есть при
+любом способе запуска, включая голый uvicorn в контейнере. Порядок
+критичен: вызов стоит ДО set_webhook, иначе самый первый запрос к
+Telegram API успеет напечатать URL с токеном.
+
 Запуск:
     python -m scripts.run_webhook
     # или напрямую:
@@ -50,6 +57,7 @@ from telegram import Update
 from telegram.ext import Application
 
 from reviews_agent.config import get_settings
+from reviews_agent.logging_setup import configure_logging
 from reviews_agent.tg.handlers import register_handlers
 
 logger = logging.getLogger(__name__)
@@ -66,6 +74,11 @@ async def lifespan(app: FastAPI):
     """
     Поднимает приложение Telegram и регистрирует вебхук.
 
+    Первым делом — configure_logging(). При запуске через
+    scripts/run_webhook.py логирование уже настроено и вызов ничего не
+    меняет; при запуске голым uvicorn (Docker) это ЕДИНСТВЕННОЕ место,
+    где оно вообще настраивается.
+
     .updater(None) обязателен: без него PTB собирает Updater для polling,
     который в вебхук-режиме не нужен и будет мешать.
 
@@ -74,6 +87,8 @@ async def lifespan(app: FastAPI):
     измениться. Разгребать их вслепую хуже, чем отбросить: оператор может
     запросить карточку заново через scripts/run_graph.py --card.
     """
+    configure_logging()
+
     tg_app = (
         Application.builder()
         .token(settings.telegram_bot_token.get_secret_value())

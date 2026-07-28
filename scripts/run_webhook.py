@@ -1,5 +1,5 @@
 """
-Точка входа вебхук-сервиса.
+Точка входа вебхук-сервиса для ЛОКАЛЬНОЙ разработки.
 
     python -m scripts.run_webhook
 
@@ -9,9 +9,11 @@
 пути в proxy и пути в setWebhook, и увидеть их обе рядом дешевле, чем
 искать в логах Telegram.
 
-В Docker (шаг R3) точкой входа станет uvicorn напрямую — там печатать
-некому. ВАЖНО: глушение httpx (см. mute_token_leaking_loggers) должно
-переехать туда же, иначе токен окажется в docker logs.
+В Docker (R3) точка входа — голый uvicorn, этот скрипт там не
+выполняется. Именно поэтому настройка логирования БОЛЬШЕ НЕ ЖИВЁТ ЗДЕСЬ:
+она переехала в reviews_agent/logging_setup.py и вызывается из lifespan
+приложения, то есть при любом способе запуска. Здесь она вызывается лишь
+для того, чтобы баннер ниже печатался в уже настроенное логирование.
 """
 
 import logging
@@ -19,29 +21,14 @@ import logging
 import uvicorn
 
 from reviews_agent.config import get_settings
-
-
-# У Telegram Bot API токен зашит прямо в путь запроса:
-#   https://api.telegram.org/bot<TOKEN>/sendMessage
-# httpx на уровне INFO печатает полный URL каждого запроса, поэтому при
-# basicConfig(level=INFO) токен уходит в stdout на КАЖДОМ обращении к API,
-# а на R3 — ещё и в docker logs. WARNING оставляет видимыми ошибки
-# транспорта, но убирает строку с URL.
-TOKEN_LEAKING_LOGGERS = ("httpx", "httpcore", "telegram.request")
-
-
-def mute_token_leaking_loggers() -> None:
-    """Поднять до WARNING логгеры, которые печатают URL Telegram API."""
-    for name in TOKEN_LEAKING_LOGGERS:
-        logging.getLogger(name).setLevel(logging.WARNING)
+from reviews_agent.logging_setup import (
+    configure_logging,
+    mute_token_leaking_loggers,  # noqa: F401  — сохранено как публичное имя
+)
 
 
 def main() -> None:
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s %(levelname)-8s %(name)s: %(message)s",
-    )
-    mute_token_leaking_loggers()
+    configure_logging(level=logging.INFO)
 
     settings = get_settings()
 
