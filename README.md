@@ -8,7 +8,8 @@
 
 ## Что делает
 
-1. Принимает отзыв (Google Maps), определяет язык — uk / en.
+1. Принимает отзыв (`POST /reviews` от источника отзывов, например n8n),
+   определяет язык — uk / en.
 2. Классифицирует: категория, тональность, срочность, флаг эскалации.
 3. Маршрутизирует по категории:
    - `spam` — отсекается без генерации;
@@ -38,7 +39,7 @@ reviews_agent/
 ├── nodes/      — узлы графа (ingest, classify, retrieve, generate, ...)
 ├── prompts/    — промпты классификатора и генератора
 ├── tg/         — Telegram-клиент и HITL-карточки
-└── api/        — FastAPI: webhook, health-check
+└── api/        — FastAPI: приём отзывов, вебхук, health-check
 data/           — фикстуры отзывов и база знаний
 scripts/        — индексация базы знаний, прогон графа, запуск вебхука
 tests/          — тесты
@@ -84,17 +85,54 @@ pgvector, 22 строки в `knowledge_base`.
 Скрипты запускаются из корня репозитория:
 
 ```bash
-python -m scripts.index_knowledge_base               # переиндексация после правок базы знаний
-python -m scripts.run_graph <review_id>              # START: до HITL-паузы
+python -m scripts.index_knowledge_base       # переиндексация после правок базы знаний
+python -m scripts.run_graph <review_id>              # START: до HITL-паузы (аварийный путь, см. ниже)
 python -m scripts.run_graph <review_id> approve      # аварийное возобновление без бота
 python -m scripts.run_graph <review_id> --reset      # стереть нить перед чистым прогоном
-python -m scripts.run_webhook                        # локальный запуск вебхук-сервиса
-python -m pytest tests/ -v                           # тесты
+python -m scripts.run_webhook                # локальный запуск вебхук-сервиса
+python -m pytest tests/ -v                   # тесты
 ```
 
 `thread_id` равен `review_id`, поэтому повторный START по существующей
 нити не возобновляет её, а дописывает новый прогон к старому.
 Перед любым повторным прогоном фикстуры — всегда `--reset`.
+
+⚠️ **После переиндексации базы знаний нужен рестарт контейнера.**
+`generate()` кэширует голос бренда и примеры ответов в памяти процесса —
+переиндексация идёт отдельным процессом (`docker exec ... scripts.index_knowledge_base`),
+и работающий сервис о ней не узнает. Без рестарта сервис продолжит отвечать
+старым голосом бренда неопределённо долго. Скрипт индексации печатает это
+предупреждение в конце вывода.
+
+## Приём отзывов (POST /reviews)
+
+Штатный путь. Источник отзывов (например n8n) отдаёт их сервису сам:
+
+```bash
+curl -X POST http://reviews-agent:8080/reviews \
+    -H 'Content-Type: application/json' \
+    -d '{
+      "review_id": "rev_003",
+      "source": "google_maps",
+      "author": "Марина Литвин",
+      "rating": 3,
+      "created_at": "2026-07-10T14:00:00Z",
+      "text": "..."
+    }'
+```
+
+Отвечает `202` немедленно, обработка идёт в фоне; результат — карточка
+оператору в Telegram, а не тело ответа. `409`, если `review_id` уже
+обрабатывался — сброс нити (`--reset`) делает оператор осознанно, эндпоинт
+этого не делает никогда.
+
+Эндпоинт **не принимает** `client_id` — его подставляет сам сервис из
+настроек. Наружу эндпоинт не открыт: Nginx проксирует только вебхук
+Telegram, вызов идёт по внутренней docker-сети.
+
+`docker exec ... scripts.run_graph <review_id>` остаётся аварийным путём —
+им пользуются при недоступном n8n или на демо-прогонах фикстур, где нужен
+`--reset` и печать всех фаз в консоль.
 
 ## Деплой
 
@@ -114,13 +152,14 @@ docker logs --since 15m reviews-agent | grep -v /health
 
 Образ собирается на самом сервере (x86_64), а не на ARM-маке.
 Веса моделей (~3.2 ГБ) запечены в отдельный ранний слой, поэтому
-правки кода их не пересобирают.
+правки кода их не пересобирают — пересборка занимает секунды, а не минуты.
 
 Операционные команды в проде:
 
 ```bash
 docker exec reviews-agent python -m scripts.run_graph <review_id> --reset
-docker exec reviews-agent python -m scripts.run_graph <review_id>
+docker exec reviews-agent python -m scripts.index_knowledge_base
+docker compose restart reviews-agent    # обязателен после переиндексации — см. выше
 ```
 
 Два правила: локальный сервис и контейнер не должны работать
@@ -129,8 +168,8 @@ docker exec reviews-agent python -m scripts.run_graph <review_id>
 свободен от обратного SSH-туннеля.
 
 Nginx терминирует TLS на `reviews.kinetica.solutions` и проксирует
-только `/telegram/webhook` на `127.0.0.1:8080`. `/health` наружу
-не открыт.
+только `/telegram/webhook` на `127.0.0.1:8080`. `/health` и `/reviews`
+наружу не открыты; `/reviews` доступен только внутри docker-сети.
 
 ## Лицензия
 

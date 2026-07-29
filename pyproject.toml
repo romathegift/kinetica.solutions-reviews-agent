@@ -28,6 +28,13 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest==9.1.1",
+    # starlette.testclient с версии 0.51 предпочитает httpx2 и на обычном
+    # httpx откатывается с StarletteDeprecationWarning. Причина не в стиле:
+    # httpx не выпускает релизов с 2024 года, и httpx2 — путь, выбранный
+    # мейнтейнерами starlette и fastapi.
+    # ТОЛЬКО dev: рантайм-образ ставит проект без [dev], httpx2 в него
+    # не попадает и на прод не влияет.
+    "httpx2==2.9.1",
 ]
 
 [tool.setuptools]
