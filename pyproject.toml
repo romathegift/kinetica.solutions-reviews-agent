@@ -8,7 +8,6 @@ version = "0.1.0"
 description = "Kinetica Solutions — LangGraph review-response agent with human-in-the-loop Telegram gate"
 readme = "README.md"
 requires-python = ">=3.11,<3.12"
-
 dependencies = [
     "langgraph==1.2.9",
     "langgraph-checkpoint-postgres==3.1.0",
@@ -20,8 +19,10 @@ dependencies = [
     "pydantic-settings==2.14.2",
     "httpx==0.28.1",
     "python-telegram-bot==22.8",
-    "fastapi>=0.115",
-    "uvicorn[standard]>=0.32",
+    # uvicorn приходит транзитивно с fastapi[standard], но объявлен явно:
+    # это команда запуска контейнера (CMD), а не только внутренняя зависимость.
+    # Если fastapi перестанет тянуть его в [standard], сломается не импорт, а старт сервиса.
+    "uvicorn[standard]==0.51.0",
 ]
 
 [project.optional-dependencies]
